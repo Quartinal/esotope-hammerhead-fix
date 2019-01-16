@@ -1,0 +1,24 @@
+{
+  "name": "esotope-hammerhead",
+  "version": "0.1.0",
+  "description": "",
+  "main": "esotope.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish-please": "publish-please",
+    "prepublishOnly": "publish-please guard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miherlosev/esotope-hammerhead.git"
+  },
+  "author": "miherlosev <miherlosev@mail.ru> (http://devexpress.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/miherlosev/esotope-hammerhead/issues"
+  },
+  "homepage": "https://github.com/miherlosev/esotope-hammerhead#readme",
+  "devDependencies": {
+    "publish-please": "^5.4.3"
+  }
+}
