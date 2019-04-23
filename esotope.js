@@ -1125,11 +1125,11 @@ var ExprRawGen = {
     ArrowFunctionExpression: function generateArrowFunctionExpression ($expr, settings) {
         var parenthesize = Precedence.ArrowFunction < settings.precedence;
 
-        if ($expr.async)
-            _.js += 'async ';
-
         if (parenthesize)
             _.js += '(';
+
+        if ($expr.async)
+            _.js += 'async ';
 
         generateFunctionBody($expr);
 
@@ -1413,7 +1413,7 @@ var ExprRawGen = {
             if ($expr.value.generator)
                 _.js += exprJs + '*' + keyJs;
             else if ($expr.value.async)
-                _.js += exprJs + ' async ' + keyJs;
+                _.js += exprJs + 'async ' + keyJs;
             else
                 _.js += join(exprJs, keyJs);
         }
@@ -1653,7 +1653,7 @@ var ExprRawGen = {
 
 
 //Regular expressions
-var EXPR_STMT_UNALLOWED_EXPR_REGEXP = /^{|^class(?:\s|{)|^function(?:\s|\*|\()/;
+var EXPR_STMT_UNALLOWED_EXPR_REGEXP = /^{|^class(?:\s|{)|^(async )?function(?:\s|\*|\()/;
 
 
 //Common statement generators
