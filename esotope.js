@@ -1138,9 +1138,17 @@ var ExprRawGen = {
     },
 
     AwaitExpression: function generateAwaitExpression ($expr, settings) {
+        var parenthesize = $expr.argument.type !== Syntax.CallExpression;
+
         _.js += 'await ';
 
+        if (parenthesize)
+            _.js += '(';
+
         ExprGen[$expr.argument.type]($expr.argument, settings);
+
+        if (parenthesize)
+            _.js += ')';
     },
 
     ConditionalExpression: function generateConditionalExpression ($expr, settings) {
