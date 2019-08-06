@@ -87,6 +87,7 @@ var Syntax = {
     GeneratorExpression:      'GeneratorExpression',
     Identifier:               'Identifier',
     IfStatement:              'IfStatement',
+    Import:                   'Import',
     ImportSpecifier:          'ImportSpecifier',
     ImportDeclaration:        'ImportDeclaration',
     Literal:                  'Literal',
@@ -1542,6 +1543,10 @@ var ExprRawGen = {
 
     Identifier: function generateIdentifier ($expr) {
         _.js += $expr.name;
+    },
+
+    Import: function generateImport () {
+        _.js += 'import';
     },
 
     ImportSpecifier: generateImportOrExportSpecifier,
