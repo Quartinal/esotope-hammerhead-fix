@@ -1029,13 +1029,6 @@ function generateArrayPatternOrExpression ($expr) {
         _.js += '[]';
 }
 
-function generateImportOrExportSpecifier ($expr) {
-    _.js += $expr.id.name;
-
-    if ($expr.name)
-        _.js += _.space + 'as' + _.space + $expr.name.name;
-}
-
 function generateGeneratorOrComprehensionExpression ($expr) {
     //NOTE: GeneratorExpression should be parenthesized with (...), ComprehensionExpression with [...]
     var $blocks     = $expr.blocks,
@@ -1549,9 +1542,19 @@ var ExprRawGen = {
         _.js += 'import';
     },
 
-    ImportSpecifier: generateImportOrExportSpecifier,
+    ImportSpecifier: function generateImportSpecifier ($expr) {
+        _.js += $expr.imported.name;
 
-    ExportSpecifier: generateImportOrExportSpecifier,
+        if ($expr.local)
+            _.js += _.space + 'as' + _.space + $expr.local.name;
+    },
+
+    ExportSpecifier: function generateImportOrExportSpecifier ($expr) {
+        _.js += $expr.local.name;
+
+        if ($expr.exported)
+            _.js += _.space + 'as' + _.space + $expr.exported.name;
+    },
 
     Literal: function generateLiteral ($expr) {
         if (extra.raw && $expr.raw !== void 0)
@@ -1857,7 +1860,11 @@ var StmtRawGen = {
         _.js += ';';
     },
 
-    ExportDeclaration: function generateExportDeclaration ($stmt, settings) {
+    ExportAllDeclaration: function ($stmt, settings) {
+        StmtRawGen.ExportDeclaration($stmt, settings, true);
+    },
+
+    ExportDeclaration: function generateExportDeclaration ($stmt, settings, exportAll) {
         var $specs        = $stmt.specifiers,
             $decl         = $stmt.declaration,
             withSemicolon = semicolons || !settings.semicolonOptional;
@@ -1875,10 +1882,13 @@ var StmtRawGen = {
         // export * FromClause ;
         // export ExportClause[NoReference] FromClause ;
         // export ExportClause ;
-        else if ($specs) {
+        else if ($specs || exportAll) {
             var stmtJs = 'export';
 
-            if ($specs.length === 0)
+            if (exportAll)
+                stmtJs += _.optSpace + '*';
+
+            else if ($specs.length === 0)
                 stmtJs += _.optSpace + '{' + _.optSpace + '}';
 
             else if ($specs[0].type === Syntax.ExportBatchSpecifier) {
@@ -1925,6 +1935,10 @@ var StmtRawGen = {
 
             _.js += join('export', declJs);
         }
+    },
+
+    ExportNamedDeclaration: function ($stmt, settings) {
+        StmtRawGen.ExportDeclaration($stmt, settings);
     },
 
     ExpressionStatement: function generateExpressionStatement ($stmt, settings) {
@@ -2459,4 +2473,4 @@ exports.generate = function ($node, options) {
         ExprGen = ExprRawGen;
 
     return run($node);
-}
+};
