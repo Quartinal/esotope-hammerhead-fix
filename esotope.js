@@ -145,6 +145,7 @@ var Precedence = {
     Multiplicative: 12,
     Unary:          13,
     Postfix:        14,
+    Await:          14,
     Call:           15,
     New:            16,
     TaggedTemplate: 17,
@@ -881,6 +882,11 @@ var Preset = {
         semicolonOptional: false
     },
 
+    e20: {
+        precedence: Precedence.Await,
+        allowCall:  true
+    },
+
     s1: function (functionBody, semicolonOptional) {
         return {
             allowIn:           true,
@@ -1134,14 +1140,14 @@ var ExprRawGen = {
     },
 
     AwaitExpression: function generateAwaitExpression ($expr, settings) {
-        var parenthesize = $expr.argument.type !== Syntax.CallExpression;
+        var parenthesize = Precedence.Await < settings.precedence;
 
         if (parenthesize)
             _.js += '(';
 
-        _.js += 'await ';
+        _.js += $expr.all ? 'await* ' : 'await ';
 
-        ExprGen[$expr.argument.type]($expr.argument, settings);
+        ExprGen[$expr.argument.type]($expr.argument, Preset.e20);
 
         if (parenthesize)
             _.js += ')';
