@@ -1136,10 +1136,10 @@ var ExprRawGen = {
     AwaitExpression: function generateAwaitExpression ($expr, settings) {
         var parenthesize = $expr.argument.type !== Syntax.CallExpression;
 
-        _.js += 'await ';
-
         if (parenthesize)
             _.js += '(';
+
+        _.js += 'await ';
 
         ExprGen[$expr.argument.type]($expr.argument, settings);
 
