@@ -1450,7 +1450,7 @@ var ExprRawGen = {
     Property: function generateProperty ($expr) {
         var $val  = $expr.value,
             $kind = $expr.kind,
-            keyJs = exprToJs($expr.key, Preset.e5);
+            keyJs = exprToJs($expr.key, Preset.e4);
 
         if ($expr.computed)
             keyJs = '[' + keyJs + ']';
