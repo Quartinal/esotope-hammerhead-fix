@@ -1718,7 +1718,8 @@ function generateForStatementIterator ($op, $stmt, settings) {
         $left                 = $stmt.left,
         bodySemicolonOptional = !semicolons && settings.semicolonOptional,
         prevIndent1           = shiftIndent(),
-        stmtJs                = 'for' + _.optSpace + '(';
+        awaitStr              = $stmt.await ? ' await' : '',
+        stmtJs                = 'for' + awaitStr + _.optSpace + '(';
 
     if ($left.type === Syntax.VariableDeclaration) {
         var prevIndent2 = shiftIndent();
@@ -1732,7 +1733,7 @@ function generateForStatementIterator ($op, $stmt, settings) {
 
     stmtJs = join(stmtJs, $op);
 
-    var rightJs = exprToJs($stmt.right, Preset.e5);
+    var rightJs = exprToJs($stmt.right, Preset.e4);
 
     stmtJs = join(stmtJs, rightJs) + ')';
 
