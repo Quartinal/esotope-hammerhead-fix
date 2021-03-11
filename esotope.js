@@ -89,9 +89,10 @@ var Syntax = {
     GeneratorExpression:      'GeneratorExpression',
     Identifier:               'Identifier',
     IfStatement:              'IfStatement',
-    Import:                   'Import',
+    ImportExpression:         'ImportExpression',
     ImportSpecifier:          'ImportSpecifier',
     ImportDeclaration:        'ImportDeclaration',
+    ChainExpression:          'ChainExpression',
     Literal:                  'Literal',
     LabeledStatement:         'LabeledStatement',
     LogicalExpression:        'LogicalExpression',
@@ -129,29 +130,32 @@ var Syntax = {
 exports.Syntax = Syntax;
 
 var Precedence = {
-    Sequence:       0,
-    Yield:          1,
-    Assignment:     1,
-    Conditional:    2,
-    ArrowFunction:  2,
-    LogicalOR:      3,
-    LogicalAND:     4,
-    BitwiseOR:      5,
-    BitwiseXOR:     6,
-    BitwiseAND:     7,
-    Equality:       8,
-    Relational:     9,
-    BitwiseSHIFT:   10,
-    Additive:       11,
-    Multiplicative: 12,
-    Unary:          13,
-    Postfix:        14,
-    Await:          14,
-    Call:           15,
-    New:            16,
-    TaggedTemplate: 17,
-    Member:         18,
-    Primary:        19
+    Sequence:         0,
+    Yield:            1,
+    Assignment:       1,
+    Conditional:      2,
+    ArrowFunction:    2,
+    Coalesce:         3,
+    LogicalOR:        3,
+    LogicalAND:       4,
+    BitwiseOR:        5,
+    BitwiseXOR:       6,
+    BitwiseAND:       7,
+    Equality:         8,
+    Relational:       9,
+    BitwiseSHIFT:     10,
+    Additive:         11,
+    Multiplicative:   12,
+    Unary:            13,
+    Exponentiation:   14,
+    Postfix:          14,
+    Await:            14,
+    Call:             15,
+    New:              16,
+    TaggedTemplate:   17,
+    OptionalChaining: 17,
+    Member:           18,
+    Primary:          19
 };
 
 var BinaryPrecedence = {
@@ -179,7 +183,9 @@ var BinaryPrecedence = {
     '-':          Precedence.Additive,
     '*':          Precedence.Multiplicative,
     '%':          Precedence.Multiplicative,
-    '/':          Precedence.Multiplicative
+    '/':          Precedence.Multiplicative,
+    '??':         Precedence.Coalesce,
+    '**':         Precedence.Exponentiation
 };
 
 function getDefaultOptions () {
@@ -1191,6 +1197,10 @@ var ExprRawGen = {
             _.js += '(';
 
         ExprGen[$callee.type]($callee, Preset.e3);
+
+        if ($expr.optional)
+            _.js += '?.';
+
         _.js += '(';
 
         for (var i = 0; i < argCount; ++i) {
@@ -1268,13 +1278,16 @@ var ExprRawGen = {
             ExprGen[$obj.type]($obj, Preset.e11(settings.allowCall));
 
         if ($expr.computed) {
+            if ($expr.optional)
+                _.js += '?.';
+
             _.js += '[';
             ExprGen[$prop.type]($prop, Preset.e15(settings.allowCall));
             _.js += ']';
         }
 
         else
-            _.js += '.' + $prop.name;
+            _.js += ($expr.optional ? '?.' : '.') + $prop.name;
 
         if (parenthesize)
             _.js += ')';
@@ -1558,12 +1571,25 @@ var ExprRawGen = {
         _.js += 'this';
     },
 
-    Identifier: function generateIdentifier ($expr) {
+    Identifier: function generateIdentifier ($expr, precedence, flag) {
         _.js += $expr.name;
     },
 
-    Import: function generateImport () {
-        _.js += 'import';
+    ImportExpression: function generateImportExpression ($expr, settings) {
+        var parenthesize = Precedence.Call < settings.precedence;
+        var $source      = $expr.source;
+
+        if (parenthesize)
+            _.js += '(';
+
+        _.js += 'import(';
+
+        ExprGen[$source.type]($source, Preset.e4);
+
+        _.js += ')';
+
+        if (parenthesize)
+            _.js += ')';
     },
 
     ImportSpecifier: function generateImportSpecifier ($expr) {
@@ -1578,6 +1604,33 @@ var ExprRawGen = {
 
         if ($expr.exported)
             _.js += _.space + 'as' + _.space + $expr.exported.name;
+    },
+
+    ChainExpression: function generateChainExpression ($expr, settings) {
+        var parenthesize = Precedence.OptionalChaining < settings.precedence;
+        var $expression  = $expr.expression;
+
+        settings = settings || {};
+
+        var newSettings  = {
+            precedence: Precedence.OptionalChaining,
+            allowIn:    settings.allowIn ,
+            allowCall:  settings.allowCall,
+
+            allowUnparenthesizedNew: settings.allowUnparenthesizedNew
+        }
+
+        if (parenthesize) {
+            newSettings.allowCall = true;
+            _.js += '(';
+        }
+
+        console.dir($expr);
+
+        ExprGen[$expression.type]($expression, newSettings);
+
+        if (parenthesize)
+            _.js += ')';
     },
 
     Literal: function generateLiteral ($expr) {

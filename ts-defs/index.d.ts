@@ -37,7 +37,7 @@ export enum Syntax {
     GeneratorExpression      = 'GeneratorExpression',
     Identifier               = 'Identifier',
     IfStatement              = 'IfStatement',
-    Import                   = 'Import',
+    ImportExpression         = 'ImportExpression',
     ImportSpecifier          = 'ImportSpecifier',
     ImportDeclaration        = 'ImportDeclaration',
     Literal                  = 'Literal',
