@@ -1625,8 +1625,6 @@ var ExprRawGen = {
             _.js += '(';
         }
 
-        console.dir($expr);
-
         ExprGen[$expression.type]($expression, newSettings);
 
         if (parenthesize)
