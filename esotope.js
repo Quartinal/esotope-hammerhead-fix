@@ -103,6 +103,7 @@ var Syntax = {
     NewExpression:            'NewExpression',
     ObjectExpression:         'ObjectExpression',
     ObjectPattern:            'ObjectPattern',
+    PrivateIdentifier:        'PrivateIdentifier',
     Program:                  'Program',
     Property:                 'Property',
     RestElement:              'RestElement',
@@ -1598,6 +1599,10 @@ var ExprRawGen = {
 
     Identifier: function generateIdentifier ($expr, precedence, flag) {
         _.js += $expr.name;
+    },
+
+    PrivateIdentifier: function generatePrivateIdentifier ($expr, precedence, flag) {
+        _.js += '#' + $expr.name;
     },
 
     ImportExpression: function generateImportExpression ($expr, settings) {
