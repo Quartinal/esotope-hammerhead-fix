@@ -105,6 +105,7 @@ var Syntax = {
     ObjectPattern:            'ObjectPattern',
     Program:                  'Program',
     Property:                 'Property',
+    PropertyDefinition:       'PropertyDefinition',
     RestElement:              'RestElement',
     ReturnStatement:          'ReturnStatement',
     SequenceExpression:       'SequenceExpression',
@@ -1517,6 +1518,22 @@ var ExprRawGen = {
                 ExprGen[$val.type]($val, Preset.e4);
             }
         }
+    },
+
+    PropertyDefinition: function generatePropertyDefinition ($expr) {
+        var $val  = $expr.value,
+            exprJs = $expr['static'] ? 'static' + _.optSpace : '',
+            keyJs = exprToJs($expr.key, Preset.e4);
+
+        if ($expr.computed)
+            keyJs = '[' + keyJs + ']';
+
+        _.js += exprJs + keyJs + '=' + _.optSpace;
+
+        ExprGen[$val.type]($val, Preset.e4);
+
+        if (semicolons || !settings.semicolonOptional)
+            _.js += ';';
     },
 
     ObjectExpression: function generateObjectExpression ($expr) {
