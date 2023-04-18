@@ -1521,9 +1521,9 @@ var ExprRawGen = {
     },
 
     PropertyDefinition: function generatePropertyDefinition ($expr) {
-        var $val  = $expr.value,
+        var $val   = $expr.value,
             exprJs = $expr['static'] ? 'static' + _.optSpace : '',
-            keyJs = exprToJs($expr.key, Preset.e4);
+            keyJs  = exprToJs($expr.key, Preset.e4);
 
         if ($expr.computed)
             keyJs = '[' + keyJs + ']';
