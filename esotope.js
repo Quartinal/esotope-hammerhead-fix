@@ -1529,9 +1529,14 @@ var ExprRawGen = {
         if ($expr.computed)
             keyJs = '[' + keyJs + ']';
 
-        _.js += exprJs + keyJs + '=' + _.optSpace;
+        if ($val) {
+            _.js += exprJs + keyJs + '=' + _.optSpace;
+    
+            ExprGen[$val.type]($val, Preset.e4);
+        }
+        else
+            _.js += exprJs + keyJs + _.optSpace;
 
-        ExprGen[$val.type]($val, Preset.e4);
 
         if (semicolons || !settings.semicolonOptional)
             _.js += ';';
