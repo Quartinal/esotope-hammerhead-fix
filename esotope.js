@@ -1314,10 +1314,10 @@ var ExprRawGen = {
         }
 
         else {
-            const propName     = $prop.type === Syntax.PrivateIdentifier ? "#" + $prop.name : $prop.name;
-            const exprChaining = $expr.optional ? '?.' : '.';
+            const propName      = $prop.type === Syntax.PrivateIdentifier ? '#' + $prop.name : $prop.name;
+            const chainOperator = $expr.optional ? '?.' : '.';
             
-            _.js += exprChaining + propName;
+            _.js += chainOperator + propName;
         }
 
         if (parenthesize)
