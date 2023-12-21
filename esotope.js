@@ -1314,8 +1314,9 @@ var ExprRawGen = {
         }
 
         else {
-            const propName      = $prop.type === Syntax.PrivateIdentifier ? '#' + $prop.name : $prop.name;
+            const prefix        = $prop.type === Syntax.PrivateIdentifier ? '#' : '';
             const chainOperator = $expr.optional ? '?.' : '.';
+            const propName      = prefix + $prop.name;
             
             _.js += chainOperator + propName;
         }
