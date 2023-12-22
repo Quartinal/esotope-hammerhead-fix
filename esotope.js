@@ -1313,8 +1313,13 @@ var ExprRawGen = {
             _.js += ']';
         }
 
-        else
-            _.js += ($expr.optional ? '?.' : '.') + $prop.name;
+        else {
+            const prefix        = $prop.type === Syntax.PrivateIdentifier ? '#' : '';
+            const chainOperator = $expr.optional ? '?.' : '.';
+            const propName      = prefix + $prop.name;
+            
+            _.js += chainOperator + propName;
+        }
 
         if (parenthesize)
             _.js += ')';
