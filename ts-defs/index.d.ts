@@ -99,4 +99,8 @@ export interface EsotopeOptions {
     verbatim?: string
 }
 
+interface Node {
+    type: string;
+}
+
 export function generate (ast: Node, options?: EsotopeOptions): string;
