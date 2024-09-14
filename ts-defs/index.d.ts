@@ -1,5 +1,3 @@
-import { Node } from 'estree';
-
 export enum Syntax {
     AssignmentExpression     = 'AssignmentExpression',
     AssignmentPattern        = 'AssignmentPattern',
